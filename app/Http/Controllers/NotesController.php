@@ -11,9 +11,13 @@ use Illuminate\Support\Facades\Validator;
 
 class NotesController extends Controller
 {
-    public static function index(Request $request) // TODO implement pagination
+    public static function index(Request $request)
     {
-        return new Response(NotesModel::getNotes());
+        if($request->has('all')) {
+            return new Response(NotesModel::getAllNotes());
+        }
+        $pagination = $request->get('pagination') != null ? $request->get('pagination') : 15;
+        return new Response(NotesModel::getPaginatedNotes($pagination));
     }
 
     public static function getNote(int $id)
@@ -41,7 +45,7 @@ class NotesController extends Controller
         if($validation->fails()) { // INFO Не смог сделать нормальный вывод ошибки.
             return new Response($validation->messages()->toJson(),
                 400,
-                ['Content-Type' => 'plain/text']);
+                ['Content-Type' => 'application/json']);
         }
         $note->full_name = $request->full_name;
         $note->company = $request->company;
@@ -80,7 +84,7 @@ class NotesController extends Controller
         if($validation->fails()) { // INFO Не смог сделать нормальный вывод ошибки.
             return new Response($validation->messages()->toJson(),
                 400,
-                ['Content-Type' => 'plain/text']);
+                ['Content-Type' => 'application/json']);
         }
         $note->full_name = $request->full_name != null ? $request->full_name : $note->full_name;
         $note->company = $request->company != null ? $request->company : $note->company;

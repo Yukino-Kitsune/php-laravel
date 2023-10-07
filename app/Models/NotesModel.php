@@ -22,7 +22,12 @@ class NotesModel extends Model
         return NotesFactory::new();
     }
 
-    public static function getNotes() // TODO Сделать пагинацию
+    public static function getPaginatedNotes(int $pagination)
+    {
+        return DB::table('notes')->simplePaginate($pagination);
+    }
+
+    public static function getAllNotes()
     {
         return DB::table('notes')->get();
     }
