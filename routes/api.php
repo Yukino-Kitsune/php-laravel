@@ -16,6 +16,17 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/v1/notebook', function (Request $request){
-   return response()->json(NotesController::index($request));
+    return NotesController::index($request);
 });
-
+Route::post('v1/notebook', function (Request $request){
+    return NotesController::store($request);
+});
+Route::get('/v1/notebook/{id}', function (int $id){
+    return NotesController::getNote($id);
+});
+Route::post('/v1/notebook/{id}', function (Request $request, int $id){
+    return NotesController::update($request, $id);
+});
+Route::delete('/v1/notebook/{id}', function (int $id){
+    return NotesController::delete($id);
+});
