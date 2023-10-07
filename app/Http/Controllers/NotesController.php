@@ -6,6 +6,7 @@ use App\Models\NotesModel;
 use Illuminate\Http\Response;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class NotesController extends Controller
@@ -35,9 +36,9 @@ class NotesController extends Controller
             'email' => 'required|email:rfc|max:255',
             'phone' => 'required|max:255',
             'birthday' => 'date',
-            'photo' => 'file' // TODO
+            'photo' => 'image'
         ]);
-        if($validation->fails()) { // INFO Не смог сделать нормальный вывод ошибки.
+        if($validation->fails()) { // INFO Не смог сделать нормальный вывод ошибки. TODO Надо с этим что-то сделать
             return new Response('Bad request. Check request body. Full name, phone, email are required.',
                 400,
                 ['Content-Type' => 'plain/text']);
@@ -47,11 +48,12 @@ class NotesController extends Controller
         $note->email = $request->email;
         $note->phone = $request->phone;
         $note->birthday = $request->birthday;
-        $note->photo = null; // TODO FIX ME
-        // TODO do something with photo
+        $path = $request->file('photo')->store('/photos');
+        $note->photo = Storage::url($path);
         try {
             $note->save();
         } catch (QueryException $exception) {
+            Storage::delete($path);
             return new Response('Unexpected error. Please contact with administrator',
                 400,
                 ['Content-Type' => 'plain/text']);
@@ -73,7 +75,7 @@ class NotesController extends Controller
             'email' => 'email:rfc|max:255',
             'phone' => 'max:255',
             'birthday' => 'date',
-            'photo' => '' // TODO
+            'photo' => 'image'
         ]);
         if($validation->fails()) { // INFO Не смог сделать нормальный вывод ошибки.
             return new Response('Bad request. Check request body.',
@@ -85,8 +87,21 @@ class NotesController extends Controller
         $note->email = $request->email != null ? $request->email : $note->email;
         $note->phone = $request->phone != null ? $request->phone : $note->phone;
         $note->birthday = $request->birthday != null ? $request->birthday : $note->birthday;
-        // TODO add photo
-        return new Response('Note added successfully.', 200);
+        if($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('/photos');
+            $note->photo = url(Storage::url($path));
+        }
+        try {
+            $note->save();
+        } catch (QueryException $exception) {
+            if(isset($path)) {
+                Storage::delete($path);
+            }
+            return new Response('Unexpected error. Please contact with administrator',
+                400,
+                ['Content-Type' => 'plain/text']);
+        }
+        return new Response('Note edit successfully.', 200);
     }
 
     public static function delete(int $id)
@@ -98,6 +113,7 @@ class NotesController extends Controller
                 ['Content-Type' => 'plain/text']);
         }
         if($note->delete()) {
+            Storage::delete($note->photo); // Если файла нет на сервере, исключение не вылетает
             return new Response('Note deleted', 200);
         }
         return new Response('Unexpected error. Please contact with administrator', 404);
