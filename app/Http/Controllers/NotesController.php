@@ -38,8 +38,8 @@ class NotesController extends Controller
             'birthday' => 'date',
             'photo' => 'image'
         ]);
-        if($validation->fails()) { // INFO Не смог сделать нормальный вывод ошибки. TODO Надо с этим что-то сделать
-            return new Response('Bad request. Check request body. Full name, phone, email are required.',
+        if($validation->fails()) { // INFO Не смог сделать нормальный вывод ошибки.
+            return new Response($validation->messages()->toJson(),
                 400,
                 ['Content-Type' => 'plain/text']);
         }
@@ -78,7 +78,7 @@ class NotesController extends Controller
             'photo' => 'image'
         ]);
         if($validation->fails()) { // INFO Не смог сделать нормальный вывод ошибки.
-            return new Response('Bad request. Check request body.',
+            return new Response($validation->messages()->toJson(),
                 400,
                 ['Content-Type' => 'plain/text']);
         }
