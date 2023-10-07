@@ -16,12 +16,29 @@ class NotesController extends Controller
         if($request->has('all')) {
             return new Response(NotesModel::getAllNotes());
         }
+        $validation = Validator::make($request->all(), [
+            'page' => 'int',
+            'pagination' => 'int',
+        ]);
+        if($validation->fails()) { // INFO Не смог сделать нормальный вывод ошибки.
+            return new Response($validation->messages()->toJson(),
+                400,
+                ['Content-Type' => 'application/json']);
+        }
         $pagination = $request->get('pagination') != null ? $request->get('pagination') : 15;
         return new Response(NotesModel::getPaginatedNotes($pagination));
     }
 
     public static function getNote(int $id)
     {
+        $validation = Validator::make($request->all(), [
+            'id' => 'int',
+        ]);
+        if($validation->fails()) { // INFO Не смог сделать нормальный вывод ошибки.
+            return new Response($validation->messages()->toJson(),
+                400,
+                ['Content-Type' => 'application/json']);
+        }
         $note = NotesModel::find($id);
         if($note == null) {
             return new Response('Note not found',
@@ -67,6 +84,14 @@ class NotesController extends Controller
 
     public static function update(Request $request, int $id)
     {
+        $validation = Validator::make($request->all(), [
+            'id' => 'int',
+        ]);
+        if($validation->fails()) { // INFO Не смог сделать нормальный вывод ошибки.
+            return new Response($validation->messages()->toJson(),
+                400,
+                ['Content-Type' => 'application/json']);
+        }
         $note = NotesModel::find($id);
         if ($note == null) {
             return new Response('Note not found',
@@ -110,6 +135,14 @@ class NotesController extends Controller
 
     public static function delete(int $id)
     {
+        $validation = Validator::make($request->all(), [
+            'id' => 'int',
+        ]);
+        if($validation->fails()) { // INFO Не смог сделать нормальный вывод ошибки.
+            return new Response($validation->messages()->toJson(),
+                400,
+                ['Content-Type' => 'application/json']);
+        }
         $note = NotesModel::find($id);
         if ($note == null) {
             return new Response('Note not found',
