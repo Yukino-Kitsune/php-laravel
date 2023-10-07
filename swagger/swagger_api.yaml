@@ -1,0 +1,251 @@
+---
+openapi: 3.0.0
+info:
+  title: future_test_task
+  description: The API for test task
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/KOVTUNOV505/future_task/1.0.0
+  description: SwaggerHub API Auto Mocking
+paths:
+  /api/v1/notebook:
+    get:
+      tags:
+      - Записная книжка
+      description: Возращает записи из записной книжки
+      parameters:
+      - name: pagination
+        in: query
+        description: Сколько записей вывести на одной странице
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+      - name: page
+        in: query
+        description: Страница
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: integer
+          format: int32
+      - name: all
+        in: query
+        description: Вывести все записи(Значение не указывать)
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: boolean
+      responses:
+        "200":
+          description: Возращает записи
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notebook'
+        "400":
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+    post:
+      tags:
+      - Записная книжка
+      description: Добавить запись в записную книжку
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/addNotebook'
+      responses:
+        "201":
+          description: Успешное добавление записи в книжку
+        "400":
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400_1'
+  /api/v1/notebook/{id}:
+    get:
+      tags:
+      - Записная книжка
+      description: Возращает запись из записной книжки с заданным id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: Возращает запись из записной книжки
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notebook'
+        "400":
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+        "404":
+          description: Запись не найдена
+          content:
+            plain/text:
+              schema:
+                type: string
+                example: Note not found
+    post:
+      tags:
+      - Записная книжка
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/editNotebook'
+      responses:
+        "200":
+          description: Запись изменена успешно
+          content:
+            plain/text:
+              schema:
+                type: string
+                example: Edit successfully.
+        "404":
+          description: Запись не найдена
+          content:
+            plain/text:
+              schema:
+                type: string
+                example: Note not found.
+        "400":
+          description: Ошибка запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400_1'
+    delete:
+      tags:
+      - Записная книжка
+      description: Удаляет запись с заданным id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: Запись удалена успешно
+          content:
+            plain/text:
+              schema:
+                type: string
+                example: Delete successfully
+        "404":
+          description: Запись не найдена
+          content:
+            plain/text:
+              schema:
+                type: string
+                example: Note not found.
+components:
+  schemas:
+    Notebook:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        full_name:
+          type: string
+        company:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        birthday:
+          type: string
+          format: date
+        photo:
+          type: string
+          format: uri
+    addNotebook:
+      required:
+      - email
+      - full_name
+      - phone
+      type: object
+      properties:
+        full_name:
+          type: string
+        company:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        birthday:
+          type: string
+          format: date
+        photo:
+          type: string
+          format: binary
+    editNotebook:
+      type: object
+      properties:
+        full_name:
+          type: string
+        company:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        birthday:
+          type: string
+          format: date
+        photo:
+          type: string
+          format: binary
+    inline_response_400:
+      type: object
+      properties:
+        parameter_name:
+          type: array
+          items:
+            type: string
+            example: The parameter_name must be an integer.
+    inline_response_400_1:
+      type: object
+      properties:
+        parameter_name:
+          type: array
+          items:
+            type: string
+            example: The parameter_name must be an image file.
