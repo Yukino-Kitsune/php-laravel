@@ -3,6 +3,7 @@
 use App\Http\Controllers\NotesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,12 +22,12 @@ Route::get('/v1/notebook', function (Request $request){
 Route::post('v1/notebook', function (Request $request){
     return NotesController::store($request);
 });
-Route::get('/v1/notebook/{id}', function (int $id){
+Route::get('/v1/notebook/{id}', function ($id){
     return NotesController::getNote($id);
 });
-Route::post('/v1/notebook/{id}', function (Request $request, int $id){
+Route::post('/v1/notebook/{id}', function (Request $request, $id){
     return NotesController::update($request, $id);
 });
-Route::delete('/v1/notebook/{id}', function (int $id){
+Route::delete('/v1/notebook/{id}', function ($id) {
     return NotesController::delete($id);
 });

@@ -29,15 +29,12 @@ class NotesController extends Controller
         return new Response(NotesModel::getPaginatedNotes($pagination));
     }
 
-    public static function getNote(int $id)
+    public static function getNote($id)
     {
-        $validation = Validator::make($request->all(), [
-            'id' => 'int',
-        ]);
-        if($validation->fails()) { // INFO Не смог сделать нормальный вывод ошибки.
-            return new Response($validation->messages()->toJson(),
+        if(!is_int($id)) {
+            return new Response('id is not an integer',
                 400,
-                ['Content-Type' => 'application/json']);
+                ['Content-Type' => 'plain/text']);
         }
         $note = NotesModel::find($id);
         if($note == null) {
@@ -82,15 +79,12 @@ class NotesController extends Controller
         return new Response('Note added successfully.', 201);
     }
 
-    public static function update(Request $request, int $id)
+    public static function update(Request $request, $id)
     {
-        $validation = Validator::make($request->all(), [
-            'id' => 'int',
-        ]);
-        if($validation->fails()) { // INFO Не смог сделать нормальный вывод ошибки.
-            return new Response($validation->messages()->toJson(),
+        if(!is_int($id)) {
+            return new Response('id is not an integer',
                 400,
-                ['Content-Type' => 'application/json']);
+                ['Content-Type' => 'plain/text']);
         }
         $note = NotesModel::find($id);
         if ($note == null) {
@@ -133,15 +127,12 @@ class NotesController extends Controller
         return new Response('Note edit successfully.', 200);
     }
 
-    public static function delete(int $id)
+    public static function delete($id)
     {
-        $validation = Validator::make($request->all(), [
-            'id' => 'int',
-        ]);
-        if($validation->fails()) { // INFO Не смог сделать нормальный вывод ошибки.
-            return new Response($validation->messages()->toJson(),
+        if(!is_int($id)) {
+            return new Response('id is not an integer',
                 400,
-                ['Content-Type' => 'application/json']);
+                ['Content-Type' => 'plain/text']);
         }
         $note = NotesModel::find($id);
         if ($note == null) {
