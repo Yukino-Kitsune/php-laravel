@@ -31,7 +31,7 @@ class NotesController extends Controller
 
     public static function getNote($id)
     {
-        if(!is_int($id)) {
+        if(!is_numeric($id)) {
             return new Response('id is not an integer',
                 400,
                 ['Content-Type' => 'plain/text']);
@@ -81,7 +81,7 @@ class NotesController extends Controller
 
     public static function update(Request $request, $id)
     {
-        if(!is_int($id)) {
+        if(!is_numeric($id)) {
             return new Response('id is not an integer',
                 400,
                 ['Content-Type' => 'plain/text']);
@@ -129,7 +129,7 @@ class NotesController extends Controller
 
     public static function delete($id)
     {
-        if(!is_int($id)) {
+        if(!is_numeric($id)) {
             return new Response('id is not an integer',
                 400,
                 ['Content-Type' => 'plain/text']);
