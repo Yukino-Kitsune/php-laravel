@@ -24,7 +24,7 @@ class NotesFactory extends Factory
             'email' => $this->faker->email(),
             'phone' => $this->faker->phoneNumber(),
             'birthday' => $this->faker->date(),
-            'photo' => $this->faker->file('./storage/app/tmp', './storage/app/photos', false),
+            'photo' => $this->faker->file('./storage/app/random_images', './storage/app/photos', false),
         ];
     }
 }
